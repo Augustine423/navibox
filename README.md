@@ -43,7 +43,9 @@ GPS_DATA_LOG: Path to the WebSocket data log file (default: gps_data.log)
 Installation
 
 Clone the Repository:
-git clone https://github.com/your-username/navibox.git
+```
+git clone https://github.com/Augustine423/navibox
+```
 cd navibox
 
 
