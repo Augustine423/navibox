@@ -1,17 +1,5 @@
 <img width="640" height="640" alt="image" src="https://github.com/user-attachments/assets/b82e0f4d-65ec-4d40-a0c3-27d04e0312f8" />
 
-
-
-
-
-
-
-
-
-
-
-
-
 Navibox GPS Data Collection System
 Overview
 The Navibox GPS Data Collection System is a Python-based solution for collecting, processing, and transmitting high-precision GPS data from the u-blox ZED-F9P-04B-01 GNSS module. This system is designed for applications requiring centimeter-level accuracy, such as surveying, precision agriculture, drones, robotics, and autonomous navigation. It supports dual-band GNSS, real-time kinematic (RTK) positioning, and data transmission via WebSocket.
@@ -158,9 +146,7 @@ Commit your changes (git commit -m "Add your feature").
 Push to the branch (git push origin feature/your-feature).
 Open a pull request.
 
-License
-This project is licensed under the MIT License. See the LICENSE file for details.
-Acknowledgments
+
 
 Built for the u-blox ZED-F9P-04B-01 GNSS module.
 Uses the pynmea2 library for NMEA parsing and websocket-client for WebSocket communication.
