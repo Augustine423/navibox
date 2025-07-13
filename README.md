@@ -5,7 +5,7 @@ Installation
 
 Clone the Repository:
 ```
-git clone https://github.com/Augustine423/navibox
+git clone https://github.com/Augustine423/navibox.git
 ```
 cd navibox
 
