@@ -1,0 +1,1 @@
+pyserial pynmea2 websocket-client geopy python-dotenv
