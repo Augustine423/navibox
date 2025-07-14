@@ -66,12 +66,12 @@ DATA_TIMEOUT = 30  # seconds before considering device offline
 BAUDRATE_FALLBACKS = [38400, 9600, 4800, 115200]  # fallback baudrates to try
 
 # Enhanced Movement filtering configuration to prevent GPS drift and noise
-MIN_MOVEMENT_THRESHOLD = 0.00009  # ~8.8 meters — increased to ignore more small movements
-MIN_SPEED_THRESHOLD = 1.0         # km/h — reduced for better heading detection
-POSITION_SMOOTHING_FACTOR = 0.8   # 0.0–1.0 — increased smoothing
+MIN_MOVEMENT_THRESHOLD = 0.00010  # ~8.8 meters — increased to ignore more small movements
+MIN_SPEED_THRESHOLD = 1.5         # km/h — reduced for better heading detection
+POSITION_SMOOTHING_FACTOR = 0.9   # 0.0–1.0 — increased smoothing
 MAX_POSITION_JUMP = 0.0005        # ~55 meters — reduced to catch smaller glitches
 STATIONARY_THRESHOLD = 0.00002    # ~2.2 meters — threshold for completely stationary
-UPDATE_COOLDOWN = 4               # seconds — minimum time between position updates
+UPDATE_COOLDOWN = 2               # seconds — minimum time between position updates
 
 # Additional filtering parameters
 MIN_SATELLITE_COUNT = 4           # minimum satellites required for position update
