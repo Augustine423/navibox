@@ -1,1 +1,17 @@
 pyserial pynmea2 websocket-client geopy python-dotenv
+
+[Unit]
+Description=Navibox GPS Data Collection Service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=mdt
+WorkingDirectory=/home/mdt/navibox
+ExecStart=/home/mdt/navibox/bin/python3 /home/mdt/navibox/main.py
+Restart=always
+RestartSec=10
+EnvironmentFile=/home/mdt/.env
+
+[Install]
+WantedBy=multi-user.target
