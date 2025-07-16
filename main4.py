@@ -12,6 +12,9 @@ from websocket import create_connection, WebSocketException
 import pynmea2
 from math import radians, sin, cos, atan2, sqrt
 
+# Initialize previous_heading
+previous_heading = None
+
 # ==============================================================================
 # LOGGING CONFIGURATION
 # ==============================================================================
@@ -65,12 +68,10 @@ SEND_INTERVAL = 1  # seconds between data transmissions
 DATA_TIMEOUT = 30  # seconds before considering device offline
 BAUDRATE_FALLBACKS = [38400, 9600, 4800, 115200]  # fallback baudrates to try
 
-
 # ==============================================================================
 # POSITION FILTERING CONFIGURATION
 # Controls location smoothing, movement thresholds, and GPS glitch rejection
 # ==============================================================================
-
 MIN_MOVEMENT_THRESHOLD = 0.00010       # ~11 meters — ignore small drifts when nearly stationary
 MAX_POSITION_JUMP = 0.0005             # ~55 meters — discard large jumps likely caused by GPS glitches
 POSITION_SMOOTHING_FACTOR = 0.9        # 0.0–1.0 — higher = smoother but slower position updates
@@ -81,8 +82,7 @@ UPDATE_COOLDOWN = 2                    # seconds — minimum interval between ac
 # GPS QUALITY & SPEED FILTERING CONFIGURATION
 # Ensures incoming data is accurate and heading/speed is reliable
 # ==============================================================================
-
-MIN_SPEED_THRESHOLD = 1.5              # km/h — minimum speed required to consider heading valid
+MIN_SPEED_THRESHOLD = 1.06              # km/h — minimum speed required to consider heading valid
 SPEED_SMOOTHING_FACTOR = 0.6           # 0.0–1.0 — smooths reported speed to avoid fluctuations
 MIN_SATELLITE_COUNT = 4                # Minimum number of satellites required for a valid fix
 MIN_HDOP_THRESHOLD = 2.5               # Maximum HDOP allowed (lower = more accurate fix)
@@ -298,6 +298,7 @@ def format_gps_data(device_data):
 # ==============================================================================
 def read_gps_data(port, baudrate, data_queue, device_timing):
     """Read and parse GPS data from serial port with enhanced filtering"""
+    global previous_heading  # Declare as global to modify
     try:
         with serial.Serial(port, baudrate, timeout=3) as ser:
             logger.info(f"GPS reading started: {port} at {baudrate} baud")
@@ -394,23 +395,20 @@ def read_gps_data(port, baudrate, data_queue, device_timing):
 
                                     last_speed = smoothed_speed
 
-                                    # Only use heading if speed is above threshold
-                                    if smoothed_speed >= MIN_SPEED_THRESHOLD:
-                                        data = {
-                                            'speed': smoothed_speed,
-                                            'heading': float(msg.true_course) if msg.true_course else None,
-                                            'date': msg.datestamp,
-                                            'time': msg.timestamp
-                                        }
-                                        logger.debug(f"{port} RMC: Speed={smoothed_speed:.1f}km/h, Heading={data.get('heading')}")
+                                    # Handle heading with previous value fallback
+                                    if msg.true_course:
+                                        current_heading = float(msg.true_course)
+                                        previous_heading = current_heading
                                     else:
-                                        data = {
-                                            'speed': smoothed_speed,
-                                            'heading': None,  # no heading when stationary
-                                            'date': msg.datestamp,
-                                            'time': msg.timestamp
-                                        }
-                                        logger.debug(f"{port} RMC: Speed={smoothed_speed:.1f}km/h (stationary)")
+                                        current_heading = previous_heading  # fallback
+
+                                    data = {
+                                        'speed': smoothed_speed,
+                                        'heading': current_heading,
+                                        'date': msg.datestamp,
+                                        'time': msg.timestamp
+                                    }
+                                    logger.debug(f"{port} RMC: Speed={smoothed_speed:.1f}km/h, Heading={data.get('heading')}")
 
                             # Process GSA messages (satellite PRNs and DOP)
                             elif isinstance(msg, pynmea2.types.GSA):
